@@ -2,7 +2,7 @@
 
 **App Name:** RecruitAI  
 **Package Name:** `com.recruitai.app`  
-**Version:** `1.0.0` (Version Code: `1`)  
+**Version:** `1.1.0` (Version Code: `4`, auto-incremented by EAS)  
 **Target Android Version:** Android 15 / 16+ (API 35/36)  
 **Minimum Android Version:** Android 7.0 (API 24)  
 **Build Format:** Android App Bundle (`.aab`)  
@@ -14,7 +14,7 @@
 ### Phase 1: Application Architecture & Manifest Audit (`app.json` & `eas.json`)
 - [x] **App Name Set to "RecruitAI"**: Configured in `app.json` line 3 (`"name": "RecruitAI"`).
 - [x] **Package Name Declared**: `"package": "com.recruitai.app"` configured.
-- [x] **Version & Version Code Configured**: `"version": "1.0.0"`, `"versionCode": 1`.
+- [x] **Version & Version Code Configured**: `"version": "1.1.0"`, `"versionCode": 4` (auto-incremented by EAS on build).
 - [x] **Android 15 / 16+ Compatibility**: Explicitly locked compile & target SDK to 35 via `expo-build-properties` plugin (compliant with Google Play's target SDK 34+ requirement).
 - [x] **Cleartext Traffic Disabled**: Set `"usesCleartextTraffic": false` to enforce HTTPS on all network communications.
 - [x] **Deprecated Permissions Removed**: Eliminated `READ_EXTERNAL_STORAGE` and `WRITE_EXTERNAL_STORAGE` to comply with scoped storage and avoid Play Console All Files Access rejection.

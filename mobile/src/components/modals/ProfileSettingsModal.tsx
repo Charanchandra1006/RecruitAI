@@ -1204,7 +1204,7 @@ export const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
               {/* App Version */}
               <View className="flex-row items-center justify-between p-2.5 bg-[#F8F6F2] rounded border border-border">
                 <Text className="font-sans-medium text-xs text-foreground">Application Build</Text>
-                <Text className="font-mono text-xs font-bold text-muted">v1.0.0 (Parity Verified)</Text>
+                <Text className="font-mono text-xs font-bold text-muted">v1.1.0 (Parity Verified)</Text>
               </View>
 
               {/* Engine */}

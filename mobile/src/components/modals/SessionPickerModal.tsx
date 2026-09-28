@@ -281,7 +281,7 @@ export const SessionPickerModal = forwardRef<
                 Legal & Compliance
               </Text>
             </View>
-            <Text className="font-sans text-[10px] text-muted">RecruitAI v1.0.0</Text>
+            <Text className="font-sans text-[10px] text-muted">RecruitAI v1.1.0</Text>
           </View>
           <View className="flex-row flex-wrap items-center gap-x-3 gap-y-1">
             <TouchableOpacity

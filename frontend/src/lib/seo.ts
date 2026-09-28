@@ -171,7 +171,7 @@ export function softwareApplicationJsonLd() {
     screenshot: `${SITE_URL}/og-image.png`,
     author: { "@id": `${SITE_URL}/#organization` },
     publisher: { "@id": `${SITE_URL}/#organization` },
-    softwareVersion: "1.0.0",
+    softwareVersion: "1.1.0",
   };
 }
 

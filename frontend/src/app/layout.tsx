@@ -159,7 +159,7 @@ const jsonLd = {
       description:
         "AI recruiting software for automated resume screening, blind hiring, objective rubric scoring, ATS export and hiring analytics — with human-in-the-loop control.",
       browserRequirements: "Requires JavaScript. Requires HTML5.",
-      softwareVersion: "1.0.0",
+      softwareVersion: "1.1.0",
       aggregateRating: {
         "@type": "AggregateRating",
         ratingValue: "4.9",

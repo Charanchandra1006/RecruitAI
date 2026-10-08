@@ -9,12 +9,13 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688?style=flat-square&logo=fastapi)](https://fastapi.tiangolo.com/)
 [![LangGraph](https://img.shields.io/badge/LangGraph-0.2+-orange?style=flat-square&logo=chainlink)](https://langchain-ai.github.io/langgraph/)
 [![Supabase pgvector](https://img.shields.io/badge/Supabase-pgvector-3ecf8e?style=flat-square&logo=supabase)](https://supabase.com/)
-[![Tests Passing](https://img.shields.io/badge/Tests-197%2B%20Passing-success?style=flat-square&logo=pytest)](https://github.com/Sri-dinesh/RecruitAI/actions)
+[![Tests Passing](https://img.shields.io/badge/Tests-205%2B%20Passing-success?style=flat-square&logo=pytest)](https://github.com/Sri-dinesh/RecruitAI/actions)
 [![GDPR Compliant](https://img.shields.io/badge/GDPR-Art.%2015%2F17%2F20%2F22-blue?style=flat-square)](https://gdpr-info.eu/)
 [![Lighthouse](https://img.shields.io/badge/Lighthouse-95%2B-green?style=flat-square&logo=lighthouse)](https://web.dev/performance/)
+[![Release](https://img.shields.io/badge/Release-v1.1.0-blue?style=flat-square)](https://github.com/Sri-dinesh/RecruitAI/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 
-**Enterprise-grade, multi-agent hiring intelligence — automated resume screening, blind evaluations, real-time analytics, and 1:1 Web ↔ Mobile parity with offline resilience. Production SEO + ASO ready for 100k+ organic reach.**
+**Enterprise-grade, multi-agent hiring intelligence — automated resume screening, blind evaluations, conversational candidate memory, real-time analytics, and 1:1 Web ↔ Mobile parity with offline resilience. v1.1.0 production — Android AAB-ready, SEO + ASO built for 100k+ organic reach.**
 
 [Live Platform](https://recruitaiofficial.vercel.app) • [Live Demo Video](https://drive.google.com/drive/folders/1LqA2B1YfSbc-91-OUlOwBDksLj5RAYDc?usp=sharing) • [Presentation Deck](https://canva.link/vhjbsmm3ggyqaf6) • [Report Bug](https://github.com/Sri-dinesh/RecruitAI/issues) • [Request Feature](https://github.com/Sri-dinesh/RecruitAI/issues)
 
@@ -52,6 +53,7 @@ RecruitAI replaces manual screening with a **deterministic, multi-agent AI syste
 - **Supervisor-Worker Orchestration:** LangGraph coordinates 5 agents — JD ingestion, vector screening, interview probe generation, salary benchmarking, scheduling — with explicit HITL gates before any email/calendar dispatch.
 - **RAG with pgvector:** Google Gemini Embedding 2 (`384-d` MRL) + IVFFlat cosine retrieval at **31ms p95**, query expansion, semantic relevance scoring — not keyword filters.
 - **Full Parity:** Every recruiter workflow (ingest file + text, rubric calibrate, copilot `@mention` + 20 presets, triage with offline queue, compare, schedule, outreach via real SMTP, ATS export JSON/CSV, PDF dossier, analytics) is identical on Next.js 16 and Expo 57. Verified.
+- **Conversational Candidate Memory:** The supervisor pins `active_candidate_id(s)` every turn — pronouns (`him/her/them`), bare follow-ups (`send mail`), and multi-candidate sets (`compare A vs B` → `mail them`) resolve without re-asking. Role-level intents (salary, trends) never inherit. 8 dedicated regression tests.
 - **Executive Dossiers:** Two-pass ReportLab `NumberedCanvas` PDF with `Page X of Y`, vector styling, EEOC/GDPR disclaimers.
 - **HITL Safeguards:** Outbound emails (`POST /api/email/send`), status overrides (`POST /api/candidates/evaluate`), calendar locks — all gated; cross-device status now unified on `POST /candidates/evaluate` (tech 4/5 + comm 3/5).
 
@@ -67,6 +69,9 @@ RecruitAI replaces manual screening with a **deterministic, multi-agent AI syste
 | **Generic mass-blast emails (<5% reply)** | Role + skill-grounded drafting + HITL confirm — Web `OutreachPage:161` now `POST /api/email/send` (real SMTP, fallback simulation), Mobile `EmailDrafter:126` same | Higher reply, zero autonomous sends |
 | **ATS re-entry** | Validated `POST /api/export/ats` JSON/CSV (`convertAtsToCsv` quotes) — Web `AtsExportModal` + Mobile `ats-export.tsx` parity, Greenhouse/Lever/Workday schema | **1-click handoff**, no glue code |
 | **Cross-device drift** | Unified `POST /candidates/evaluate` (tech/comm) + offline mutation queue (`localStorage`/`SecureStore` replay on `health`/`focus`) | **100% loss-free** drain, 4s/12s poll sync |
+| **Repetitive "for who?" ask-backs** | Entity memory (`active_candidate_id(s)` + `focused_candidate_id`): explicit > pronoun/history-scan > focused > single-fallback; `mail` added to email intent regex | **Zero redundant prompts** on follow-ups; 8 regression tests green |
+| **Hidden mobile email action** | Send-mail entry points on candidate cards (✉️), inspector (`Email {name}`), Workspace deep-link `{tool: email, candidateId}` with preselected recipient | Email reachable in **1 tap** from any candidate surface |
+| **Mobile nav crashes** | `goBackOrReplace()` (`canGoBack()` else `replace(fallback)`) on all 8 back buttons + registered `modals/profile-settings` screen, deduped modal routes | **Zero `GO_BACK` unhandled** errors |
 | **No organic discoverability** | 26-route sitemap + robots LLM allowlist + 4-type JSON-LD + sitelinks nav + 20 SEO pages (features/solutions/guides/compare) + Play ASO 30/80/4000 chars | **100k/mo organic target** — crawlable without auth |
 
 ---
@@ -93,13 +98,14 @@ RecruitAI replaces manual screening with a **deterministic, multi-agent AI syste
 
 ```
 ================================ QUALITY GATE METRICS ================================
-  Backend Test Suite (Pytest)     : 159 tests collected & passing (100% pass rate)
+  Backend Test Suite (Pytest)     : 167 tests collected & passing (100% pass rate, incl. 8 multiturn-memory regressions)
   Mobile Test Suite (Jest)        : 38 unit & integration tests passing (9/9 suites)
   Frontend Next.js Build          : 0 TS errors (strict), 46 routes prerendered
   Mobile TypeScript Suite         : 0 TS errors (strict)
+  Mobile EAS Build                : production profile -> Android App Bundle (.aab), autoIncrement versionCode
   Backend Type Checker            : 0 errors across 71 source files (Mypy strict)
   Backend Linter                  : 100% compliance (Ruff check app/)
-  Overall Coverage                : 197+ Automated Verification Tests Passing
+  Overall Coverage                : 205+ Automated Verification Tests Passing
 ======================================================================================
 ```
 
@@ -137,9 +143,11 @@ RecruitAI replaces manual screening with a **deterministic, multi-agent AI syste
 - **Blind (Toggle):** Redacts PII prior to scoring, persists via `SecureStore`/`localStorage` `recruitai_blind_mode`, syncs `PATCH /api/users/me {blind_mode_default}`. Mobile toggles live `681`, Web stages on save — both now replicate.
 - **Rubric:** 5-pillar (Tech 35%, Experience 25%, Architecture 15%, Communication 15%, Credentials 10%) — editable calibrator `±5%` `5..60` validation `total=100%` → `POST /api/chat Calibrate` (`RequisitionSpec:111`, `JobsPage:213`).
 
-### 2. Co-Pilot (20 Presets + @mention)
-- Queries: *"Who has strongest Kubernetes?"*, *"Compare top 3"*, *"Timeline gaps?"* — pronoun resolution, 8-turn history.
+### 2. Co-Pilot (20 Presets + @mention + Entity Memory)
+- Queries: *"Who has strongest Kubernetes?"*, *"Compare top 3"*, *"Timeline gaps?"* — full entity memory, 8-turn history.
+- **Memory that ends ask-backs:** `resolve_candidate_with_memory()` priority — explicit name > pronoun/history-scan (`him/her/them`, `mail them`) > `focused_candidate_id` (open inspector / @-mention chip) > single-candidate fallback. Bare follow-ups (`send mail`, `schedule it`) inherit for entity intents only (`email/schedule/interview_questions/redflags/compare/query_candidate`); `salary`/`trend` never inherit. Multi-sets tracked (`active_candidate_ids`) so `compare A vs B` → `mail them` resolves both.
 - **Presets:** `screening 4, comparison 3, interviews 4, outreach 3, risks 3, market 3` (`config/copilotPresets.ts:27`, `mobile/constants/copilotPresets.ts:31`). Total 20. Badge `TOTAL_PRESETS_COUNT`.
+- **Focused signal:** Web sends inspected candidate (`useCopilotChat` `focusedCandidateId`), Mobile sends @-mentioned candidate (`useRecruitChat`) — backend prefers in-message references first, so focus never overrides names.
 - **Async:** Mobile dual-mode 90s timeout + `pollJobUntilDone` `202`; Web sync 60s with 2× retry.
 
 ### 3. Candidate Decision Workflow
@@ -153,7 +161,8 @@ RecruitAI replaces manual screening with a **deterministic, multi-agent AI syste
 - Now **8 backend APIs** (`lib/analyticsApi.ts:20`): `summary, pipeline, candidates-over-time?days=7|30|90, match-distribution, top-skills?top_n, hiring-velocity, jobs-summary, recent-activity?limit` (`routes_analytics.py:28`). Web previously client-aggregated 20× `GET /sessions/{id}` → now parity with `mobile/hooks/useAnalytics.ts:46`. KPI 8 cards + velocity days, not rates.
 
 ### 6. Outreach & ATS Extras (Now Parity)
-- **Outreach:** Web `OutreachPage:154` now `POST /api/email/send` `{recipient_email, email_draft: "Subject:…\\n\\nBody"}` (was `POST /api/chat` fake) — real SMTP or simulation, plus chat audit. Mobile `EmailDrafter:126` identical + test to `recruiter-preview@`.
+- **Outreach:** Web `OutreachPage:154` now `POST /api/email/send` `{recipient_email, email_draft: "Subject:…\\n\\nBody"}` (was `POST /api/chat` fake) — real SMTP or simulation, plus chat audit. **To-field is editable** with RFC-style validation; send disabled until valid. Mobile `EmailDrafter:126` identical + test to `recruiter-preview@`.
+- **Mobile email entry points:** Send-mail was buried in Workspace's 4th pill — now surfaced on candidate cards (✉️ button → Workspace deep-link `{tool: email, candidateId}` with preselected recipient), inspector (`Email {name}` button), and Workspace param handling. `flex-[2]` layout fix on send button.
 - **ATS Export:** `POST /api/export/ats` JSON/CSV `convertAtsToCsv` quoting — Web `AtsExportModal.tsx:1` (preview 4k + blob download) + Mobile `ats-export.tsx:41` (share sheet) on `Dashboard Jobs` + `Candidates` + `Workspace ATS Export`.
 
 ---
@@ -186,7 +195,7 @@ graph TD;
 
 | Agent Node | Responsibilities | Intents |
 |---|---|---|
-| **Supervisor** | Intent classification, pronoun resolution, confidence <0.60 → fallback, routing | turn routing |
+| **Supervisor** | Intent classification, entity-memory pinning (`active_candidate_id(s)`), generic follow-up inheritance, confidence <0.60 → fallback, routing | turn routing |
 | **JD Agent** | Ingest PDF/DOCX/TXT, restructure Pydantic, fetch live listings | `load_context`, `rewrite_jd`, `fetch_jd_api` |
 | **Screening & RAG Agent** | `pgvector` cosine, rubric scoring, gaps/red_flags, matrix | `screen`, `count`, `compare`, `redflags`, `query_candidate` |
 | **Interview & Salary Agent** | Interview kit, salary Tavily search, email draft, schedule | `interview_questions`, `salary`, `email`, `trend`, `schedule` |
@@ -228,8 +237,8 @@ mobile/
 │       └── report-preview.tsx   # PDF Dossier viewer + share
 ```
 
-**Key Capabilities:**
-1. **Profile & Settings** `ProfileSettingsModal.tsx:50` — Profile (name/email/company/phone/role), Preferences (`blind_mode_default`, `match_threshold [50..95] 8 values`, `auto_rubric`, `default_export_format pdf|csv`, `email_alerts/sound/digest/theme`), Security & GDPR (`UUID copy`, `GDPR export GET /privacy/user/export` via `fileExport:152`, `DELETE /privacy/user/account` Art.17), Diagnostics (`apiConnected dot`, `latency ping` `329`, `getBackendUrl:1119`, build `v1.0.0`).
+**Key Capabilities (v1.1.0 — AAB-ready via `eas build --platform android --profile production`):**
+1. **Profile & Settings** `ProfileSettingsModal.tsx:50` — Profile (name/email/company/**department**/**avatar_url**/phone/role), Preferences (`blind_mode_default`, `match_threshold [50..95] 8 values`, `auto_rubric`, `default_export_format pdf|csv`, `email_alerts/sound/digest/theme`), Security & GDPR (`UUID copy`, `GDPR export GET /privacy/user/export` via `fileExport:152`, `DELETE /privacy/user/account` Art.17), Diagnostics (`apiConnected dot`, `latency ping` `329`, `getBackendUrl:1119`, build `v1.1.0`, **bias-audit + retention run UI**).
 2. **Requisition & Rubric** `RequisitionSpec.tsx:52` — 5-pillar `±5` steppers `98`, `Total: {totalWeight}%` badge, `POST /api/chat Calibrate` `131` → re-score; Upload `DocumentPicker` + `Paste Text JD` modal `532` now direct `POST /api/ingest/upload-jd` via temp file `useFileIngestion:205` (parity with web `uploadJd: file|text`).
 3. **SlotScheduler** `SlotScheduler.tsx:53` — 5 modes (Technical/System/Coding/HR/Culture), 5 auto slots, `WebBrowser.openBrowserAsync` join + `Clipboard` copy + `cancelInterview` confirm guards.
 4. **Offline Resilience** — `offlineStorage:105` `SecureStore` queue `enqueue/get/clear` + `RecruitContext:75` `flushOfflineMutations` replay on `checkApiHealth`/`AppState active` 4s/12s/15s polls.
@@ -238,7 +247,7 @@ mobile/
 
 ## 9. Web ↔ Mobile Parity — Launch Readiness
 
-**Verified 1:1** after 13 sequential production commits (no batch). Gates per fix: `npm run build (46 routes)`, `tsc --noEmit` (both), `jest 9/38 0`, `ruff/mypy` (backend).
+**Verified 1:1**, shipped as sequential per-fix commits (no batch). Gates per fix: `npm run build (46 routes)`, `tsc --noEmit` (both), `jest 9/38 0`, `ruff/mypy` (backend).
 
 | Domain | Web File | Mobile File | Parity | Fix Commit |
 |---|---|---|---|---|
@@ -251,9 +260,14 @@ mobile/
 | **Rubric Calibrator** | `app/dashboard/jobs/page.tsx:213` editable `±5` `Total: {totalWeight}%` + `POST /api/chat Calibrate` | `components/workspace/RequisitionSpec:52` 5-pillar same | ✅ `737c858` | Web was read-only |
 | **Interviews** | `app/dashboard/interviews/page.tsx:56` `POST /api/chat` persist + copy/join/cancel | `components/workspace/SlotScheduler:53` 5 modes + join/copy/cancel | ✅ `8cc9ff3` | Was `localStorage` only |
 | **Copilot Presets** | `config/copilotPresets:27` 6 categories 20 prompts (+ `market`) | `constants/copilotPresets:31` 6/20 | ✅ `5d9fd60` | Was 17 vs 20 |
-| **Profile** | `AuthContext:21` `department` + `ProfileTab:43` avatar + `SecurityTab:15` GDPR export/delete + Diagnostics ping | `AuthContext:26` same | ✅ `7847a45` | `avatarUrl`/`theme`/`digest off` harmonized |
+| **Profile** | `AuthContext:21` `department` + `ProfileTab:43` avatar + `SecurityTab:15` GDPR export/delete + Diagnostics ping + bias/retention UI | `AuthContext:26` same | ✅ `7847a45` + `c61e844` | `avatarUrl`/`theme`/`digest off` harmonized |
+| **Red Flags + Consent** | Cards/table/compare/drawer render `red_flags` alerts + `Consent Verified` badges | `CandidateCard` + `CompareMatrix` same | ✅ `01c02bf` | Was web-silent |
+| **Analytics Aliases** | `MatchDistribution` + `ActivityFeed` backend-name aliases (no grey fallback) | `QualityHistogram` aliases | ✅ `8751773` | Was fallback color/icon |
+| **Chat Memory** | Sends `focused_candidate_id` (inspected) | Sends `focused_candidate_id` (@-mention) | ✅ `9c099a3` + `ab2d187` | Backend `408382d` resolves |
+| **Mobile Nav** | n/a (web) | `goBackOrReplace()` all 8 back buttons, `modals/profile-settings` registered | ✅ `1e068a7` | Was `GO_BACK` crash |
+| **Mobile Email UX** | n/a (web) | Card ✉️ + inspector button + Workspace deep-link | ✅ `277a0f9` | Was buried in 4th pill |
 
-**Blocking 0 remain** — core hiring loop (ingest file+text → rubric calibrate → copilot `@mention` + 20 presets → triage with queue → compare → schedule → outreach SMTP → ATS+PDF → analytics → GDPR) is **100% loss-free cross-device** (4s session, 12s sessions, 15s health). Minor cosmetic `red_flags` chips remain polish.
+**Blocking 0 remain** — core hiring loop (ingest file+text → rubric calibrate → copilot `@mention` + 20 presets + entity memory → triage with queue → compare → schedule → outreach SMTP → ATS+PDF → analytics → GDPR) is **100% loss-free cross-device** (4s session, 12s sessions, 15s health). v1.1.0 tagged for store release.
 
 ---
 
@@ -337,12 +351,12 @@ RecruitAI/
 │   │   │   ├── routes_sessions.py   # Sessions CRUD + PATCH rename + reset-all
 │   │   │   └── routes_users.py      # GET/PATCH /users/me (department, preferences)
 │   │   ├── core/                    # auth.py (JWT HS256), config.py, llm_router.py, logging.py
-│   │   ├── graph/                   # builder.py, router_node.py, nodes/* (5 agents)
+│   │   ├── graph/                   # builder.py (memory pinning), router_node.py (memory resolver), state.py (active_candidate_id(s)), nodes/* (5 agents)
 │   │   ├── rag/                     # advanced_rag.py, embeddings.py (384-d), vector_store.py, fallback_db.py
 │   │   ├── schemas/                 # Pydantic: Candidate, JobDescription, User (department)
-│   │   └── services/                # parsers, retention, report builder
+│   │   └── services/                # parsers, retention, report builder, campaign_service (focused_candidate_id)
 │   ├── scripts/init_db.sql          # Schema, RLS, RPC, analytics RPCs
-│   ├── tests/                       # 159 tests collected
+│   ├── tests/                       # 167 tests collected (incl. test_multiturn_memory.py: 8 memory regressions)
 │   └── requirements.txt
 │
 ├── frontend/                        # Next.js 16 App Router (46 static routes)
@@ -365,16 +379,18 @@ RecruitAI/
 │   │   └── config/                  # site.ts (PUBLIC_ROUTES), copilotPresets.ts (6 categories 20 prompts)
 │   └── package.json                 # Next.js 16, React 19, Tailwind CSS v4, Recharts, Framer Motion, gsap
 │
-├── mobile/                          # Expo 57 / React Native (100% parity + offline-first)
+├── mobile/                          # Expo 57 / React Native v1.1.0 (100% parity + offline-first, AAB via eas production)
 │   ├── app/
-│   │   ├── (app)/(tabs)/            # copilot (index) / candidates / workspace (5-Segment) / analytics (8 APIs + lookback)
-│   │   └── (app)/modals/            # profile-settings (4-Tab), candidate-inspector, ats-export, report-preview
+│   │   ├── (app)/(tabs)/            # copilot (index, focused_candidate_id) / candidates (✉️ entry) / workspace (deep-link {tool, candidateId}) / analytics (8 APIs + lookback)
+│   │   └── (app)/modals/            # profile-settings (4-Tab), candidate-inspector (Email button), ats-export, report-preview
 │   ├── src/
-│   │   ├── components/              # workspace/RequisitionSpec (editable rubric + paste JD direct), SlotScheduler, CompareMatrix (red_flags), CandidateCard (consent), chat/*, modals/*
+│   │   ├── components/              # workspace/RequisitionSpec (editable rubric + paste JD direct), EmailDrafter (initialCandidateId), SlotScheduler, CompareMatrix (red_flags), CandidateCard (consent + ✉️), chat/*, modals/*
 │   │   ├── context/                 # AuthContext (SecureStore cache, refreshSession) & RecruitContext (queue, 4s/12s/15s polls)
-│   │   ├── lib/                     # apiClient (45s, 2× backoff, 401 refresh, XHR multipart), offlineStorage, fileExport (ATS + GDPR), haptics
+│   │   ├── lib/                     # navigation.ts (goBackOrReplace), apiClient (45s, 2× backoff, 401 refresh, XHR multipart), offlineStorage, fileExport (ATS + GDPR), haptics
 │   │   └── constants/               # copilotPresets (6/20), theme
 │   ├── __tests__/                   # 9 suites/38 tests
+│   ├── store/                       # PLAY_STORE_CHECKLIST.md (v1.1.0 audit)
+│   ├── eas.json                     # production -> app-bundle, autoIncrement
 │   └── package.json                 # Expo 57, React Native 0.86, NativeWind v4
 │
 ├── docs/ (ignored in git)
@@ -456,6 +472,12 @@ npx expo start
 ```
 - Press `a` for Android emulator or `i` for iOS simulator, or scan QR with **Expo Go**.
 
+Production AAB (requires `eas-cli`, Expo login, `mobile/.env.production`):
+```bash
+cd mobile && eas build --platform android --profile production
+```
+*`eas.json` production profile emits `.aab` with auto-incremented `versionCode`; current release **v1.1.0**.*
+
 ---
 
 ## 15. Offline-First Development & LocalAuth
@@ -474,7 +496,7 @@ All protected endpoints require `Authorization: Bearer <token>` — `frontend/li
 ### 💬 Multi-Agent Chat & Sessions
 | Method | Endpoint | Description |
 |---|---|---|
-| `POST` | `/api/chat` | Sync or async `202` job + `GET /chat/jobs/{id}` poll + SSE `stream`; no longer faked outreach. |
+| `POST` | `/api/chat` | Sync or async `202` job + `GET /chat/jobs/{id}` poll + SSE `stream`; accepts `focused_candidate_id` for entity memory; no longer faked outreach. |
 | `GET` | `/api/sessions` | Lists recruiter campaigns. |
 | `POST` | `/api/sessions` | Creates new blank campaign. |
 | `GET` | `/api/sessions/{id}` | Hydrated session (JD, resumes, shortlist, interviews, history). |
@@ -497,8 +519,8 @@ All protected endpoints require `Authorization: Bearer <token>` — `frontend/li
 | `DELETE` | `/api/privacy/user/account` | **Art.17** Purge — both platforms confirm 2×. |
 | `DELETE` | `/api/privacy/candidates/{id}` | **Art.17** Candidate erase — both contexts. |
 | `GET` | `/api/privacy/candidates/{id}/export` | **Art.15/20** Candidate portability. |
-| `GET` | `/api/privacy/bias-audit` | **NYC LL144** impact ratios (wired for future `SecurityTab → Run Bias Audit`). |
-| `POST` | `/api/privacy/retention-policy` | TTL pruning 180/365 days. |
+| `GET` | `/api/privacy/bias-audit` | **NYC LL144** impact ratios — runnable from Web `SecurityTab` + Mobile Diagnostics (sample, mean/median, `p20/p80`, 4/5ths verdict). |
+| `POST` | `/api/privacy/retention-policy` | TTL pruning 180/365 days — runnable from both clients (`{raw_resume_ttl_days: 90, chat_ttl_days: 365}`). |
 
 ### 📊 Analytics & BI (Now 8 Backend APIs, both clients)
 | Method | Endpoint | Description |
@@ -524,7 +546,7 @@ All protected endpoints require `Authorization: Bearer <token>` — `frontend/li
 ## 17. Testing & Quality Gates
 
 ```bash
-# 1. Backend Pytest Suite (159 tests)
+# 1. Backend Pytest Suite (167 tests, incl. 8 multiturn-memory regressions)
 cd backend && pytest -v
 
 # 2. Backend Linter & Type Checker
@@ -555,6 +577,6 @@ cd ../frontend && npm run build && npx tsc --noEmit
 <div align="center">
 
 Built with precision by **Sri-dinesh** for modern talent teams.  
-*RecruitAI — The Intelligence Layer for Modern Recruiting. — Web & Mobile 100% parity, SEO/ASO production, 100k organic ready, public launch in 3 days.*
+*RecruitAI v1.1.0 — The Intelligence Layer for Modern Recruiting. Web & Mobile 100% parity, SEO/ASO production, Android AAB-ready, 100k organic ready.*
 
 </div>
